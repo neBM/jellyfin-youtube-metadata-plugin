@@ -1,14 +1,20 @@
-﻿namespace Jellyfin.Plugin.YoutubeMetadata
-{
-    class Constants
-    {
-        public const string PluginName = "YoutubeMetadata";
-        public const string PluginGuid = "b4b4353e-dc57-4398-82c1-de9079e7146a";
-        public const string ChannelUrl = "https://www.youtube.com/channel/{0}";
-        public const string VideoUrl = "https://www.youtube.com/watch?v={0}";
-        public const string SearchQuery = "https://www.youtube.com/results?search_query={0}&sp=EgIQAg%253D%253D";
+﻿using System;
+using System.Text.RegularExpressions;
 
-        public const string YTCHANNEL_RE = @"(?<=\[)[a-zA-Z0-9\-_]{24}(?=\])";
-        public const string YTID_RE = @"(?<=\[)[a-zA-Z0-9\-_]{11}(?=\])";
+namespace Jellyfin.Plugin.YoutubeMetadata
+{
+    /// <summary>
+    /// Contains constants used by the plugin.
+    /// </summary>
+    internal sealed partial class Constants
+    {
+        internal const string PluginName = "YoutubeMetadata";
+        internal static readonly Guid PluginGuid = Guid.Parse("4c748daa-a7e4-4ed1-817c-5e18c683585e");
+
+        [GeneratedRegex(@"(?<=\[)[a-zA-Z0-9\-_]{11}(?=\])")]
+        internal static partial Regex youtubeIdRegex();
+
+        [GeneratedRegex(@"(?<=\[)[a-zA-Z0-9\-_]{24}(?=\])")]
+        internal static partial Regex youtubeChannelRegex();
     }
 }

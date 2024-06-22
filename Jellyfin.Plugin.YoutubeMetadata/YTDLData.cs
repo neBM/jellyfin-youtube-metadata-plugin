@@ -1,34 +1,51 @@
-﻿using System.Collections.Generic;
+﻿using System.Text.Json.Serialization;
 
-namespace Jellyfin.Plugin.YoutubeMetadata
+namespace Jellyfin.Plugin.YoutubeMetadata;
+
+/// <summary>
+/// Represents the data retrieved from YouTube-DL for a YouTube video.
+/// </summary>
+public sealed class YTDLData
 {
     /// <summary>
-    /// Object should match how YTDL json looks.
+    /// Gets or sets the ID of the YouTube video.
     /// </summary>
-#pragma warning disable IDE1006 // Naming Styles
-    public class ThumbnailInfo
-    {
-        public string url { get; set; }
-        public int width { get; set; }
-        public int height { get; set; }
-        public string resolution { get; set; }
-        public string id { get; set; }
-    }
-    public class YTDLData
-    {
-        public string id { get; set; }
-        // Human name
-        public string uploader { get; set; }
-        public string upload_date { get; set; }
-        // https://github.com/ytdl-org/youtube-dl/issues/1806
-        public string title { get; set; }
-        public string description { get; set; }
-        // Name for use in API?
-        public string channel_id { get; set; }
-        public string track { get; set; }
-        public string artist { get; set; }
-        public string album { get; set; }
-        public List<ThumbnailInfo> thumbnails { get; set; }
-#pragma warning restore IDE1006 // Naming Styles
-    }
+    [JsonPropertyName("id")]
+    public required string Id { get; set; }
+
+    /// <summary>
+    /// Gets or sets the uploader of the YouTube video.
+    /// </summary>
+    [JsonPropertyName("uploader")]
+    public required string Uploader { get; set; }
+
+    /// <summary>
+    /// Gets or sets the upload date of the YouTube video.
+    /// </summary>
+    [JsonPropertyName("upload_date")]
+    public required string UploadDate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the title of the YouTube video.
+    /// </summary>
+    [JsonPropertyName("title")]
+    public required string Title { get; set; }
+
+    /// <summary>
+    /// Gets or sets the description of the YouTube video.
+    /// </summary>
+    [JsonPropertyName("description")]
+    public required string Description { get; set; }
+
+    /// <summary>
+    /// Gets or sets the channel ID of the YouTube video.
+    /// </summary>
+    [JsonPropertyName("channel_id")]
+    public required string ChannelId { get; set; }
+
+    /// <summary>
+    /// Gets or sets the playlist index of the YouTube video.
+    /// </summary>
+    [JsonPropertyName("playlist_index")]
+    public required int PlaylistIndex { get; set; }
 }
