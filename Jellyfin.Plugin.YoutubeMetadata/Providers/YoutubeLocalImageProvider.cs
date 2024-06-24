@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.TV;
@@ -24,13 +25,10 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Providers
         /// <param name="item">The item.</param>
         /// <param name="directoryService">The directory service.</param>
         /// <returns>The local images.</returns>
-        public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService) => directoryService
-            .GetSeriesInfo(item.ContainingFolderPath)
-            .Select((jpgPath) => new LocalImageInfo
-            {
-                Type = ImageType.Primary,
-                FileInfo = fileSystem.GetFileSystemInfo(jpgPath),
-            });
+        public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService) => new List<string> { ".jpg", ".webp" }
+            .Select((ext) => Path.ChangeExtension(item.Path, ext))
+            .Where(fileSystem.FileExists)
+            .Select((path) => new LocalImageInfo { FileInfo = fileSystem.GetFileSystemInfo(path) });
 
         /// <summary>
         /// Determines whether the provider supports the specified item.

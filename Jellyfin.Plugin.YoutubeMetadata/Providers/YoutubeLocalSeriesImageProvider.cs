@@ -25,21 +25,10 @@ public class YoutubeLocalSeriesImageProvider(IFileSystem fileSystem) : ILocalIma
     /// <param name="item">The base item for which to retrieve the images.</param>
     /// <param name="directoryService">The directory service used to access the file system.</param>
     /// /// <returns>A collection of local image information.</returns>
-    public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService)
-    {
-        var list = new List<LocalImageInfo>();
-        string jpgPath = GetSeriesInfo(item.Path);
-        if (string.IsNullOrEmpty(jpgPath))
-        {
-            return list;
-        }
-
-        var localimg = new LocalImageInfo();
-        var fileInfo = fileSystem.GetFileSystemInfo(jpgPath);
-        localimg.FileInfo = fileInfo;
-        list.Add(localimg);
-        return list;
-    }
+    public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService) => new List<string> { ".jpg", ".webp" }
+            .Select((ext) => Path.Join(item.Path, Path.GetFileName(item.Path) + ext))
+            .Where(fileSystem.FileExists)
+            .Select((path) => new LocalImageInfo { FileInfo = fileSystem.GetFileSystemInfo(path) });
 
     /// <summary>
     /// Determines whether the provider supports the specified item.
@@ -47,13 +36,4 @@ public class YoutubeLocalSeriesImageProvider(IFileSystem fileSystem) : ILocalIma
     /// <param name="item">The item to check.</param>
     /// <returns><c>true</c> if the provider supports the item; otherwise, <c>false</c>.</returns>
     public bool Supports(BaseItem item) => item is Series;
-
-    private string GetSeriesInfo(string path)
-    {
-        Matcher matcher = new();
-        matcher.AddInclude("**/*.jpg");
-        matcher.AddInclude("**/*.webp");
-        return matcher.GetResultsInFullPath(path).Where((file) => Constants.youtubeChannelRegex().Match(file).Success).FirstOrDefault(defaultValue: null) ?? throw new FileNotFoundException("Series info not found.");
-        throw new FileNotFoundException("No series image found.");
-    }
 }
