@@ -13,7 +13,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 /// <summary>
 /// Represents a local metadata provider for YouTube series.
 /// </summary>
-public class YoutubeLocalSeriesProvider(IFileSystem fileSystem, ILogger logger) : ILocalMetadataProvider<Series>
+public class YoutubeLocalSeriesProvider(IFileSystem fileSystem, ILogger<YoutubeLocalSeriesProvider> logger) : ILocalMetadataProvider<Series>
 {
     /// <summary>
     /// Gets the name of the plugin.
@@ -31,14 +31,14 @@ public class YoutubeLocalSeriesProvider(IFileSystem fileSystem, ILogger logger) 
     {
         ArgumentNullException.ThrowIfNull(info, nameof(info));
 
-        var infoJsonPath = Path.ChangeExtension(info.Path, "info.json");
+        var infoJsonPath = Path.Join(info.Path, Path.GetFileName(info.Path) + ".info.json");
         if (!fileSystem.FileExists(infoJsonPath))
         {
             logger.LogError("info.json file not found: {InfoJsonPath}", infoJsonPath);
             throw new FileNotFoundException("info.json file not found", infoJsonPath);
         }
 
-        var infoJson = Utils.ReadYTDLInfo(infoJsonPath);
+        var infoJson = Utils.ReadYTChannelInfo(infoJsonPath);
 
         logger.LogInformation("Retrieving metadata for series: {SeriesId}", infoJson.Id);
 

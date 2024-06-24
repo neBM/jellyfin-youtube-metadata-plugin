@@ -17,7 +17,7 @@ using Microsoft.Extensions.Logging;
 /// <summary>
 /// Provides local metadata for episodes from YouTube videos.
 /// </summary>
-public class YoutubeLocalEpisodeProvider(IFileSystem fileSystem, ILogger logger) : ILocalMetadataProvider<Episode>
+public class YoutubeLocalEpisodeProvider(IFileSystem fileSystem, ILogger<YoutubeLocalEpisodeProvider> logger) : ILocalMetadataProvider<Episode>
 {
     /// <summary>
     /// Gets the name of the plugin.
@@ -42,7 +42,7 @@ public class YoutubeLocalEpisodeProvider(IFileSystem fileSystem, ILogger logger)
             throw new FileNotFoundException("info.json file not found", infoJsonPath);
         }
 
-        var infoJson = Utils.ReadYTDLInfo(infoJsonPath);
+        var infoJson = Utils.ReadYTVideoInfo(infoJsonPath);
 
         logger.LogInformation("Retrieving metadata for episode: {EpisodeId}", infoJson.Id);
 

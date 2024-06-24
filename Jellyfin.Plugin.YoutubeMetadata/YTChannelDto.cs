@@ -1,11 +1,11 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Jellyfin.Plugin.YoutubeMetadata;
 
 /// <summary>
 /// Represents the data retrieved from YouTube-DL for a YouTube video.
 /// </summary>
-public sealed class YTDLData
+public sealed class YTChannelDto
 {
     /// <summary>
     /// Gets or sets the ID of the YouTube video.
@@ -20,18 +20,6 @@ public sealed class YTDLData
     public required string Uploader { get; set; }
 
     /// <summary>
-    /// Gets or sets the upload date of the YouTube video.
-    /// </summary>
-    [JsonPropertyName("upload_date")]
-    public required string UploadDate { get; set; }
-
-    /// <summary>
-    /// Gets or sets the title of the YouTube video.
-    /// </summary>
-    [JsonPropertyName("title")]
-    public required string Title { get; set; }
-
-    /// <summary>
     /// Gets or sets the description of the YouTube video.
     /// </summary>
     [JsonPropertyName("description")]
@@ -42,10 +30,4 @@ public sealed class YTDLData
     /// </summary>
     [JsonPropertyName("channel_id")]
     public required string ChannelId { get; set; }
-
-    /// <summary>
-    /// Gets or sets the playlist index of the YouTube video.
-    /// </summary>
-    [JsonPropertyName("playlist_index")]
-    public required int PlaylistIndex { get; set; }
 }

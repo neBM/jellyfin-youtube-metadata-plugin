@@ -5,6 +5,8 @@ namespace Jellyfin.Plugin.YoutubeMetadata
 {
     internal static class Utils
     {
-        internal static YTDLData ReadYTDLInfo(string infoJsonPath) => JsonSerializer.Deserialize<YTDLData>(File.ReadAllText(infoJsonPath)) ?? throw new JsonException("Failed to deserialize info.json");
+        internal static YTVideoDto ReadYTVideoInfo(string infoJsonPath) => JsonSerializer.Deserialize<YTVideoDto>(File.ReadAllText(infoJsonPath)) ?? throw new JsonException("Failed to deserialize info.json");
+
+        internal static YTChannelDto ReadYTChannelInfo(string infoJsonPath) => JsonSerializer.Deserialize<YTChannelDto>(File.ReadAllText(infoJsonPath)) ?? throw new JsonException("Failed to deserialize info.json");
     }
 }
