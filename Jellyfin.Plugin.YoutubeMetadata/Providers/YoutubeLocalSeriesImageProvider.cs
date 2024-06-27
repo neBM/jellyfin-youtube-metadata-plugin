@@ -4,20 +4,18 @@ using System.Linq;
 using MediaBrowser.Controller.Entities;
 using MediaBrowser.Controller.Entities.TV;
 using MediaBrowser.Controller.Providers;
-using MediaBrowser.Model.IO;
-using Microsoft.Extensions.FileSystemGlobbing;
 
 namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 
 /// <summary>
 /// Provides local series image information from YouTube.
 /// </summary>
-public class YoutubeLocalSeriesImageProvider(IFileSystem fileSystem) : ILocalImageProvider
+public class YoutubeLocalSeriesImageProvider : ILocalImageProvider
 {
     /// <summary>
     /// Gets the name of the plugin.
     /// </summary>
-    public string Name => Constants.PluginName;
+    public string Name => PluginConstants.PluginName;
 
     /// <summary>
     /// Retrieves a list of local images for a given item.
@@ -27,8 +25,9 @@ public class YoutubeLocalSeriesImageProvider(IFileSystem fileSystem) : ILocalIma
     /// /// <returns>A collection of local image information.</returns>
     public IEnumerable<LocalImageInfo> GetImages(BaseItem item, IDirectoryService directoryService) => new List<string> { ".jpg", ".webp" }
             .Select((ext) => Path.Join(item.Path, Path.GetFileName(item.Path) + ext))
-            .Where(fileSystem.FileExists)
-            .Select((path) => new LocalImageInfo { FileInfo = fileSystem.GetFileSystemInfo(path) });
+            .Select(directoryService.GetFile)
+            .Where((path) => path != null)
+            .Select((path) => new LocalImageInfo { FileInfo = path });
 
     /// <summary>
     /// Determines whether the provider supports the specified item.

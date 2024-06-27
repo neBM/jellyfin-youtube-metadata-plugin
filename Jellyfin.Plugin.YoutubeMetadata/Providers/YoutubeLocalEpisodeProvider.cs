@@ -6,6 +6,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Providers;
 
 using System;
 using System.IO;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Jellyfin.Data.Enums;
@@ -17,7 +18,7 @@ using Microsoft.Extensions.Logging;
 /// <summary>
 /// Provides local metadata for episodes from YouTube videos.
 /// </summary>
-public class YoutubeLocalEpisodeProvider(IFileSystem fileSystem, ILogger<YoutubeLocalEpisodeProvider> logger) : ILocalMetadataProvider<Episode>
+public class YoutubeLocalEpisodeProvider(ILogger<YoutubeLocalEpisodeProvider> logger) : ILocalMetadataProvider<Episode>
 {
     /// <summary>
     /// Gets the name of the plugin.
@@ -25,51 +26,60 @@ public class YoutubeLocalEpisodeProvider(IFileSystem fileSystem, ILogger<Youtube
     public string Name => Constants.PluginName;
 
     /// <summary>
-    /// Retrieves the metadata for an episode from a local YouTube video file.
+    /// Retrieves the metadata for an episode.
     /// </summary>
-    /// <param name="info">The information about the video file.</param>
-    /// <param name="directoryService">The directory service used to access the file system.</param>
+    /// <param name="info">The item info.</param>
+    /// <param name="directoryService">The directory service.</param>
     /// <param name="cancellationToken">The cancellation token.</param>
-    /// <returns>A task that represents the asynchronous operation. The task result contains the metadata for the episode.</returns>
-    public Task<MetadataResult<Episode>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken)
+    /// <returns>The metadata result.</returns>
+    public Task<MetadataResult<Episode>> GetMetadata(ItemInfo info, IDirectoryService directoryService, CancellationToken cancellationToken) => GetMetadata(info, directoryService, InfoJsonStreamProvider, cancellationToken);
+
+    /// <summary>
+    /// Retrieves the metadata for an episode.
+    /// </summary>
+    /// <param name="info">The item info.</param>
+    /// <param name="directoryService">The directory service.</param>
+    /// <param name="infoJsonStreamFactory">The info.json stream factory.</param>
+    /// <param name="cancellationToken">The cancellation token.</param>
+    /// <returns>The metadata result.</returns>
+    public async Task<MetadataResult<Episode>> GetMetadata(ItemInfo info, IDirectoryService directoryService, Func<FileSystemMetadata, Stream> infoJsonStreamFactory, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(info, nameof(info));
+        ArgumentNullException.ThrowIfNull(directoryService, nameof(directoryService));
 
-        var infoJsonPath = Path.ChangeExtension(info.Path, "info.json");
-        if (!fileSystem.FileExists(infoJsonPath))
-        {
-            logger.LogError("info.json file not found: {InfoJsonPath}", infoJsonPath);
-            throw new FileNotFoundException("info.json file not found", infoJsonPath);
-        }
+        var infoJsonFile = directoryService.GetFile(Path.ChangeExtension(info.Path, "info.json")) ?? throw new FileNotFoundException("info.json file not found", info.Path);
+        using var infoJson = infoJsonStreamFactory(infoJsonFile);
 
-        var infoJson = Utils.ReadYTVideoInfo(infoJsonPath);
+        var infoJsonDto = await JsonSerializer.DeserializeAsync<YTVideoDto>(infoJson, JsonSerializerOptions.Default, cancellationToken).ConfigureAwait(false) ?? throw new JsonException("Failed to deserialize info.json");
 
-        logger.LogInformation("Retrieving metadata for episode: {EpisodeId}", infoJson.Id);
+        var episode = MetadataResultEpisodeFactory(infoJsonDto);
 
-        var episode = new MetadataResult<Episode>
-        {
-            HasMetadata = true,
-            People = [
+        logger.LogInformation("Metadata retrieved for episode: {EpisodeId}", infoJsonDto.Id);
+
+        return episode;
+    }
+
+    private static FileStream InfoJsonStreamProvider(FileSystemMetadata infoJsonFile) => File.OpenRead(infoJsonFile.FullName);
+
+    private static MetadataResult<Episode> MetadataResultEpisodeFactory(YTVideoDto infoJsonDto) => new()
+    {
+        HasMetadata = true,
+        People = [
                 new()
                 {
-                    Name = infoJson.Uploader,
+                    Name = infoJsonDto.Uploader,
                     Type = PersonKind.Creator,
-                    ProviderIds = new() { { Constants.PluginName, infoJson.ChannelId } },
+                    ProviderIds = new() { { Constants.PluginName, infoJsonDto.ChannelId } },
                 }
             ],
-            Item = new()
-            {
-                Name = infoJson.Title,
-                Overview = infoJson.Description,
-                PremiereDate = DateTime.ParseExact(infoJson.UploadDate, "yyyyMMdd", null),
-                IndexNumber = infoJson.PlaylistIndex,
-                ParentIndexNumber = 1,
-                ProviderIds = new() { { Constants.PluginName, infoJson.Id } },
-            },
-        };
-
-        logger.LogInformation("Metadata retrieved for episode: {EpisodeId}", infoJson.Id);
-
-        return Task.FromResult(episode);
-    }
+        Item = new()
+        {
+            Name = infoJsonDto.Title,
+            Overview = infoJsonDto.Description,
+            PremiereDate = DateTime.ParseExact(infoJsonDto.UploadDate, "yyyyMMdd", null),
+            IndexNumber = infoJsonDto.PlaylistIndex,
+            ParentIndexNumber = 1,
+            ProviderIds = new() { { Constants.PluginName, infoJsonDto.Id } },
+        },
+    };
 }
