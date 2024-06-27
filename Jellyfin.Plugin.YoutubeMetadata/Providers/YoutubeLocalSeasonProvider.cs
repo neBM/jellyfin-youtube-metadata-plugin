@@ -14,7 +14,7 @@ public class YoutubeLocalSeasonProvider() : ILocalMetadataProvider<Season>
     /// <summary>
     /// Gets the name of the provider.
     /// </summary>
-    public string Name => Constants.PluginName;
+    public string Name => PluginConstants.PluginName;
 
     /// <summary>
     /// Retrieves the metadata for a season based on the provided item information.

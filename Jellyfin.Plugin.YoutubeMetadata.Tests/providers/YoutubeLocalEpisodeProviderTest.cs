@@ -46,7 +46,7 @@ public class YoutubeLocalEpisodeProviderTest
         Assert.IsTrue(result.People.Count == 1);
         Assert.AreEqual(result.People[0].Name, "Uploader");
         Assert.AreEqual(result.People[0].Type, PersonKind.Creator);
-        Assert.AreEqual("123", result.Item.ProviderIds[Constants.PluginName]);
+        Assert.AreEqual("123", result.Item.ProviderIds[PluginConstants.PluginName]);
         Assert.AreEqual("Title", result.Item.Name);
         Assert.AreEqual("Description", result.Item.Overview);
     }

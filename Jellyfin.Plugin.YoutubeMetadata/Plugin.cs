@@ -27,8 +27,8 @@ public class Plugin : BasePlugin<BasePluginConfiguration>
     public static Plugin? Instance { get; private set; }
 
     /// <inheritdoc/>
-    public override string Name => Constants.PluginName;
+    public override string Name => PluginConstants.PluginName;
 
     /// <inheritdoc/>
-    public override Guid Id => Constants.PluginGuid;
+    public override Guid Id => PluginConstants.PluginGuid;
 }

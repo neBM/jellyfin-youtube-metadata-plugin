@@ -23,7 +23,7 @@ public class YoutubeLocalEpisodeProvider(ILogger<YoutubeLocalEpisodeProvider> lo
     /// <summary>
     /// Gets the name of the plugin.
     /// </summary>
-    public string Name => Constants.PluginName;
+    public string Name => PluginConstants.PluginName;
 
     /// <summary>
     /// Retrieves the metadata for an episode.
@@ -69,7 +69,7 @@ public class YoutubeLocalEpisodeProvider(ILogger<YoutubeLocalEpisodeProvider> lo
                 {
                     Name = infoJsonDto.Uploader,
                     Type = PersonKind.Creator,
-                    ProviderIds = new() { { Constants.PluginName, infoJsonDto.ChannelId } },
+                    ProviderIds = new() { { PluginConstants.PluginName, infoJsonDto.ChannelId } },
                 }
             ],
         Item = new()
@@ -79,7 +79,7 @@ public class YoutubeLocalEpisodeProvider(ILogger<YoutubeLocalEpisodeProvider> lo
             PremiereDate = DateTime.ParseExact(infoJsonDto.UploadDate, "yyyyMMdd", null),
             IndexNumber = infoJsonDto.PlaylistIndex,
             ParentIndexNumber = 1,
-            ProviderIds = new() { { Constants.PluginName, infoJsonDto.Id } },
+            ProviderIds = new() { { PluginConstants.PluginName, infoJsonDto.Id } },
         },
     };
 }
