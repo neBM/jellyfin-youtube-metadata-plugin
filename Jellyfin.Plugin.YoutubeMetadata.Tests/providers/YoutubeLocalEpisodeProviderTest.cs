@@ -61,7 +61,7 @@ public class YoutubeLocalEpisodeProviderTest
 
         Mock.Get(_directoryService!)
             .Setup(d => d.GetFile(It.IsAny<string>()))
-            .Returns(null as FileSystemMetadata);
+            .Returns(value: null);
 
         // Act & Assert
         await Assert.ThrowsExceptionAsync<FileNotFoundException>(() => provider.GetMetadata(info, _directoryService!, cancellationToken));

@@ -36,7 +36,7 @@ namespace Jellyfin.Plugin.YoutubeMetadata.Tests.Providers
             var provider = new YoutubeLocalImageProvider();
             var item = new Episode { Path = "/path/to/video.mp4" };
             var directoryServiceMock = new Mock<IDirectoryService>();
-            directoryServiceMock.Setup(ds => ds.GetFile("/path/to/video.jpg")).Returns(null as FileSystemMetadata);
+            directoryServiceMock.Setup(ds => ds.GetFile("/path/to/video.jpg")).Returns(value: null);
             directoryServiceMock.Setup(ds => ds.GetFile("/path/to/video.webp")).Returns(new FileSystemMetadata { FullName = "/path/to/video.webp" });
 
             // Act
