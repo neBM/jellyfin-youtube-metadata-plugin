@@ -11,4 +11,5 @@ category: "Metadata"
 artifacts:
   - "Jellyfin.Plugin.YoutubeMetadata.dll"
 changelog: |-
+  - Prepare for release v0.1.0 @github-actions (#2)
   - Streamline @neBM (#1)
