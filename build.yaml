@@ -1,7 +1,7 @@
 ---
 name: "YouTube Metadata"
 guid: "b4b4353e-dc57-4398-82c1-de9079e7146a"
-version: "0.1.0"
+version: "0.1.1"
 targetAbi: "10.9.7.0"
 framework: "net8.0"
 owner: "neBM"
@@ -11,4 +11,10 @@ category: "Metadata"
 artifacts:
   - "Jellyfin.Plugin.YoutubeMetadata.dll"
 changelog: |-
-  - Streamline @neBM (#1)
+  - Bump Jellyfin.Controller from 10.9.0 to 10.9.7 @dependabot (#16)
+  - feat: Add devcontainers to dependabot @neBM (#15)
+  - Bump Microsoft.NET.Test.Sdk from 17.8.0 to 17.10.0 @dependabot (#7)
+  - Bump MSTest.TestAdapter from 3.1.1 to 3.4.3 @dependabot (#6)
+  - Bump MSTest.TestFramework from 3.1.1 to 3.4.3 @dependabot (#5)
+  - Bump Jellyfin.Model from 10.9.0 to 10.9.7 @dependabot (#4)
+  - Bump coverlet.collector from 6.0.0 to 6.0.2 @dependabot (#8)
